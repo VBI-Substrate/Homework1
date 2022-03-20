@@ -2,6 +2,12 @@
 
 pub use pallet::*;
 
+#[cfg(test)]
+mod mock;
+
+#[cfg(test)]
+mod tests;
+
 #[frame_support::pallet]
 pub mod pallet {
 	use frame_support::pallet_prelude::*;
@@ -22,7 +28,7 @@ pub mod pallet {
 		<<T as Config>::Currency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
 
 	// Struct for holding Kitty information.
-	#[derive(Clone, Encode, Decode, PartialEq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
+	#[derive(Clone, Encode, Decode, PartialEq, TypeInfo, MaxEncodedLen)]
 	#[scale_info(skip_type_params(T))]
 	#[codec(mel_bound())]
 	pub struct Kitty<T: Config> {
@@ -32,7 +38,11 @@ pub mod pallet {
 		pub owner: AccountOf<T>,
 		pub createdTime: <T as pallet_timestamp::Config>::Moment,
 	}
-
+	impl<T: Config> sp_std::fmt::Display for Kitty<T> {
+		fn fmt(&self, f: &mut sp_std::fmt::Formatter<'_>) -> sp_std::fmt::Result {
+			write!(f, "dna: {:?}, price: {:?}, gender: {:?}, owner: {:?}", self.dna, self.price, self.gender, self.owner)
+		}
+	}
 	// Enum declaration for Gender.
 	#[derive(Clone, Encode, Decode, PartialEq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
 	#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
@@ -313,6 +323,7 @@ pub mod pallet {
 			};
 
 			let kitty_id = T::Hashing::hash_of(&kitty);
+			log::info!("kitty: {}", kitty);
 
 			// Performs this operation first as it may fail
 			let new_cnt = Self::kitty_cnt().checked_add(1)
