@@ -88,7 +88,24 @@ impl pallet_kitties::Config for Test {
 	type MaxKittyOwned = MaxKittyOwned;
 }
 
+
 // Build genesis storage according to the mock runtime.
 pub fn new_test_ext() -> sp_io::TestExternalities {
-	system::GenesisConfig::default().build_storage::<Test>().unwrap().into()
+    let mut t = system::GenesisConfig::default().build_storage::<Test>().unwrap();
+    pallet_balances::GenesisConfig::<Test> {
+        balances: vec![
+            (1, 1_000_000_000_000),
+            (2, 1_000_000_000_000),
+            (3, 1_000_000_000_000),
+            (4, 1_000_000_000_000),
+            (5, 1_000_000_000_000),
+            (6, 1_000_000_000_000),
+        ],
+    }
+    .assimilate_storage(&mut t)
+    .unwrap();
+
+    let mut ext = sp_io::TestExternalities::new(t);
+    ext.execute_with(|| System::set_block_number(1));
+    ext
 }
