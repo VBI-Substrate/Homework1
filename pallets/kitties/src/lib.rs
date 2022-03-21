@@ -8,6 +8,11 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
+#[cfg(feature = "runtime-benchmarks")]
+pub mod benchmarking;
+
+pub mod weights;
+
 #[frame_support::pallet]
 pub mod pallet {
 	use frame_support::pallet_prelude::*;
@@ -19,6 +24,8 @@ pub mod pallet {
 	};
 	use sp_io::hashing::blake2_128;
 	use scale_info::TypeInfo;
+	use crate::weights::WeightInfo;
+
 
 	#[cfg(feature = "std")]
 	use frame_support::serde::{Deserialize, Serialize};
@@ -36,7 +43,7 @@ pub mod pallet {
 		pub price: Option<BalanceOf<T>>,
 		pub gender: Gender,
 		pub owner: AccountOf<T>,
-		pub createdTime: <T as pallet_timestamp::Config>::Moment,
+		pub created_time: <T as pallet_timestamp::Config>::Moment,
 	}
 	impl<T: Config> sp_std::fmt::Display for Kitty<T> {
 		fn fmt(&self, f: &mut sp_std::fmt::Formatter<'_>) -> sp_std::fmt::Result {
@@ -70,6 +77,8 @@ pub mod pallet {
 
 		/// The type of Randomness we want to specify for this pallet.
 		type KittyRandomness: Randomness<Self::Hash, Self::BlockNumber>;
+
+		type WeightInfo: WeightInfo;
 	}
 
 	// Errors.
@@ -140,11 +149,11 @@ pub mod pallet {
 		/// Create a new unique kitty.
 		///
 		/// The actual kitty creation is done in the `mint()` function.
-		#[pallet::weight(100)]
+		#[pallet::weight(<T as Config>::WeightInfo::create_kitty())]
 		pub fn create_kitty(origin: OriginFor<T>) -> DispatchResult {
 			let sender = ensure_signed(origin)?;
-			let createdTime = pallet_timestamp::Pallet::<T>::now();
-			let kitty_id = Self::mint(&sender, None, None, &createdTime)?;
+			let created_time = pallet_timestamp::Pallet::<T>::now();
+			let kitty_id = Self::mint(&sender, None, None, &created_time)?;
 
 			// Logging to the console
 			log::info!("A kitty is born with ID: {:?}.", kitty_id);
@@ -156,7 +165,7 @@ pub mod pallet {
 		/// Set the price for a Kitty.
 		///
 		/// Updates Kitty price and updates storage.
-		#[pallet::weight(100)]
+		#[pallet::weight(<T as Config>::WeightInfo::set_price())]
 		pub fn set_price(
 			origin: OriginFor<T>,
 			kitty_id: T::Hash,
@@ -182,7 +191,7 @@ pub mod pallet {
 		///
 		/// Any account that holds a kitty can send it to another Account. This will reset the asking
 		/// price of the kitty, marking it not for sale.
-		#[pallet::weight(100)]
+		#[pallet::weight(<T as Config>::WeightInfo::transfer())]
 		pub fn transfer(
 			origin: OriginFor<T>,
 			to: T::AccountId,
@@ -256,7 +265,7 @@ pub mod pallet {
 		///
 		/// Breed two kitties to create a new generation
 		/// of Kitties.
-		#[pallet::weight(100)]
+		#[pallet::weight(<T as Config>::WeightInfo::breed_kitty())]
 		pub fn breed_kitty(
 			origin: OriginFor<T>,
 			parent1: T::Hash,
@@ -269,9 +278,9 @@ pub mod pallet {
 			ensure!(Self::is_kitty_owner(&parent2, &sender)?, <Error<T>>::NotKittyOwner);
 
 			let new_dna = Self::breed_dna(&parent1, &parent2)?;
-			let createdTime = pallet_timestamp::Pallet::<T>::now();
+			let created_time = pallet_timestamp::Pallet::<T>::now();
 
-			Self::mint(&sender, Some(new_dna), None, &createdTime)?;
+			Self::mint(&sender, Some(new_dna), None, &created_time)?;
 
 			Ok(())
 		}
@@ -312,14 +321,14 @@ pub mod pallet {
 			owner: &T::AccountId,
 			dna: Option<[u8; 16]>,
 			gender: Option<Gender>,
-			createdTime: &T::Moment,
+			created_time: &T::Moment,
 		) -> Result<T::Hash, Error<T>> {
 			let kitty = Kitty::<T> {
 				dna: dna.unwrap_or_else(Self::gen_dna),
 				price: None,
 				gender: gender.unwrap_or_else(Self::gen_gender),
 				owner: owner.clone(),
-				createdTime: createdTime.clone(),
+				created_time: created_time.clone(),
 			};
 
 			let kitty_id = T::Hashing::hash_of(&kitty);

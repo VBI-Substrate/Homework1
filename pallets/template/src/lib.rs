@@ -4,7 +4,7 @@
 /// Learn more about FRAME and the core library of Substrate FRAME pallets:
 /// <https://docs.substrate.io/v3/runtime/frame>
 pub use pallet::*;
-/*
+
 #[cfg(test)]
 mod mock;
 
@@ -14,7 +14,6 @@ mod tests;
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarking;
 
-*/
 
 use frame_support::pallet_prelude::*;
 use frame_system::pallet_prelude::*;

@@ -86,6 +86,7 @@ impl pallet_kitties::Config for Test {
 	type Currency = Balances;
 	type KittyRandomness = RandomnessCollectiveFlip;
 	type MaxKittyOwned = MaxKittyOwned;
+	type WeightInfo = (); 
 }
 
 

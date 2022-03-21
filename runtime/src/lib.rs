@@ -4,7 +4,7 @@
 
 // Make the WASM binary available.
 #[cfg(feature = "std")]
-include!(concat!(	env!("OUT_DIR"), "/wasm_binary.rs"));
+include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
 use pallet_grandpa::{
 	fg_primitives, AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList,
@@ -291,7 +291,6 @@ impl pallet_loosely_coupling::Config for Runtime {
 	type Increase = TemplateModule;
 }
 
-/// Configure pallet-kitties in pallets/kitties.
 parameter_types! {
 	pub const MaxKittyOwned: u32 = 10;
 }
@@ -301,6 +300,7 @@ impl pallet_kitties::Config for Runtime {
 	type Currency = Balances;
 	type KittyRandomness = RandomnessCollectiveFlip;
 	type MaxKittyOwned = MaxKittyOwned;
+	type WeightInfo = pallet_kitties::weights::SubstrateWeightInfo<Runtime>;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -366,6 +366,7 @@ mod benches {
 		[pallet_balances, Balances]
 		[pallet_timestamp, Timestamp]
 		[pallet_template, TemplateModule]
+		[pallet_kitties, Kitties]
 	);
 }
 
