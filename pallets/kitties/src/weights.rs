@@ -41,6 +41,7 @@ pub trait WeightInfo {
 
 /// Weight functions for `pallet_kitties`.
 pub struct SubstrateWeightInfo<T>(PhantomData<T>);
+
 impl<T: frame_system::Config> WeightInfo for SubstrateWeightInfo<T> {
 	// Storage: Timestamp Now (r:1 w:0)
 	// Storage: RandomnessCollectiveFlip RandomMaterial (r:1 w:0)

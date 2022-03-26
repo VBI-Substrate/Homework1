@@ -83,6 +83,7 @@ pub mod pallet {
 			// Return a successful DispatchResultWithPostInfo
 			Ok(())
 		}
+		
 
 		/// An example dispatchable that may throw a custom error.
 		#[pallet::weight(10_000 + T::DbWeight::get().reads_writes(1,1))]
@@ -110,6 +111,9 @@ impl <T: Config> Pallet<T> {
 	pub fn update_storage(value: u32) -> DispatchResult{
 		Something::<T>::put(value);
 		Ok(())
+	}
+	pub fn get_something1() -> u32 {
+		Something::<T>::get().unwrap()
 	}
 }
 pub trait DoSome {

@@ -369,8 +369,12 @@ mod benches {
 		[pallet_kitties, Kitties]
 	);
 }
-
 impl_runtime_apis! {
+	impl pallet_template_rpc_runtime_api::TemplateRuntimeApi<Block> for Runtime {
+		fn get_something() -> u32 {
+			TemplateModule::something().unwrap()
+		}
+	}
 	impl sp_api::Core<Block> for Runtime {
 		fn version() -> RuntimeVersion {
 			VERSION

@@ -3559,6 +3559,8 @@ dependencies = [
  "frame-benchmarking-cli",
  "jsonrpc-core",
  "node-template-runtime",
+ "pallet-template-rpc",
+ "pallet-template-rpc-runtime-api",
  "pallet-transaction-payment-rpc",
  "sc-basic-authorship",
  "sc-cli",
@@ -3606,6 +3608,7 @@ dependencies = [
  "pallet-randomness-collective-flip",
  "pallet-sudo",
  "pallet-template",
+ "pallet-template-rpc-runtime-api",
  "pallet-tightly-coupling",
  "pallet-timestamp",
  "pallet-transaction-payment",
@@ -3972,6 +3975,29 @@ dependencies = [
  "sp-core",
  "sp-io",
  "sp-runtime",
+]
+
+[[package]]
+name = "pallet-template-rpc"
+version = "4.0.0-dev"
+dependencies = [
+ "jsonrpc-core",
+ "jsonrpc-core-client",
+ "jsonrpc-derive",
+ "pallet-template-rpc-runtime-api",
+ "parity-scale-codec",
+ "sp-api",
+ "sp-blockchain",
+ "sp-core",
+ "sp-rpc",
+ "sp-runtime",
+]
+
+[[package]]
+name = "pallet-template-rpc-runtime-api"
+version = "4.0.0-dev"
+dependencies = [
+ "sp-api",
 ]
 
 [[package]]
