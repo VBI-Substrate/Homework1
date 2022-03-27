@@ -18,31 +18,31 @@
 //! RPC interface for the transaction payment pallet.
 
 pub use self::gen_client::Client as TransactionPaymentClient;
-use codec::{Codec, Decode};
+// use codec::{Codec, Decode};
 use jsonrpc_core::{Error as RpcError, ErrorCode, Result};
 use jsonrpc_derive::rpc;
 use sp_api::ProvideRuntimeApi;
 use sp_blockchain::HeaderBackend;
 use sp_runtime::{
 	generic::BlockId,
-	traits::{Block as BlockT, MaybeDisplay},
+	traits::{Block as BlockT},
 };
 use std::sync::Arc;
-use pallet_template_rpc_runtime_api::TemplateRuntimeApi;
+pub use pallet_template_rpc_runtime_api::TemplateApi as TemplateRuntimeApi;
 
 #[rpc]
 pub trait TemplateApi<BlockHash> {
-	#[rpc(name = "something_get")]
+	#[rpc(name = "template_getSomething")]
 	fn get_something(&self, at: Option<BlockHash>) -> Result<u32>;
 }
 
 /// A struct that implements the [`TransactionPaymentApi`].
-pub struct Template<C, P> {
+pub struct TemplateStruct<C, P> {
 	client: Arc<C>,
 	_marker: std::marker::PhantomData<P>,
 }
 
-impl<C, P> Template<C, P> {
+impl<C, P> TemplateStruct<C, P> {
 	/// Create new `TransactionPayment` with the given reference to the client.
 	pub fn new(client: Arc<C>) -> Self {
 		Self { client, _marker: Default::default() }
@@ -67,7 +67,7 @@ impl From<Error> for i64 {
 }
 
 impl<C, Block> TemplateApi<<Block as BlockT>::Hash>
-	for Template<C, Block>
+	for TemplateStruct<C, Block>
 where
 	Block: BlockT,
 	C: 'static + ProvideRuntimeApi<Block> + HeaderBackend<Block>,

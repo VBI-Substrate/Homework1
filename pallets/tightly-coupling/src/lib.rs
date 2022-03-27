@@ -63,7 +63,7 @@ pub mod pallet {
 			// Check that the extrinsic was signed and get the signer.
 			// This function will return an error if the extrinsic is not signed.
 			// https://docs.substrate.io/v3/runtime/origins
-			let who = ensure_signed(origin)?;
+			let _who = ensure_signed(origin)?;
 
 			let data = pallet_template::Pallet::<T>::something().unwrap();
 
@@ -78,9 +78,9 @@ pub mod pallet {
 			// Check that the extrinsic was signed and get the signer.
 			// This function will return an error if the extrinsic is not signed.
 			// https://docs.substrate.io/v3/runtime/origins
-			let who = ensure_signed(origin)?;
+			let _who = ensure_signed(origin)?;
 
-			pallet_template::Pallet::<T>::update_storage(value);
+			let _ = pallet_template::Pallet::<T>::update_storage(value);
 
 			// Emit an event.
 			Self::deposit_event(Event::UpdateStore(value));

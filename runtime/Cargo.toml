@@ -91,6 +91,7 @@ std = [
 	"pallet-tightly-coupling/std",
 	"pallet-loosely-coupling/std",
 	"pallet-kitties/std",
+	"pallet-template-rpc-runtime-api/std"
 ]
 runtime-benchmarks = [
 	"frame-benchmarking/runtime-benchmarks",

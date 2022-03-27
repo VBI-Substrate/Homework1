@@ -14,7 +14,6 @@ use sp_api::ProvideRuntimeApi;
 use sp_block_builder::BlockBuilder;
 use sp_blockchain::{Error as BlockChainError, HeaderBackend, HeaderMetadata};
 use pallet_template_rpc;
-use pallet_template_rpc_runtime_api;
 /// Full client dependencies.
 pub struct FullDeps<C, P> {
 	/// The client instance to use.
@@ -34,7 +33,7 @@ where
 	C::Api: substrate_frame_rpc_system::AccountNonceApi<Block, AccountId, Index>,
 	C::Api: pallet_transaction_payment_rpc::TransactionPaymentRuntimeApi<Block, Balance>,
 	C::Api: BlockBuilder<Block>,
-	C::Api: pallet_template_rpc_runtime_api::TemplateRuntimeApi<Block>,
+	C::Api: pallet_template_rpc::TemplateRuntimeApi<Block>,
 	P: TransactionPool + 'static,
 {
 	use pallet_transaction_payment_rpc::{TransactionPayment, TransactionPaymentApi};
@@ -46,7 +45,7 @@ where
 	io.extend_with(SystemApi::to_delegate(FullSystem::new(client.clone(), pool, deny_unsafe)));
 
 	io.extend_with(TransactionPaymentApi::to_delegate(TransactionPayment::new(client.clone())));
-	io.extend_with(pallet_template_rpc::TemplateApi::to_delegate(pallet_template_rpc::Template::new(client.clone())));
+	io.extend_with(pallet_template_rpc::TemplateApi::to_delegate(pallet_template_rpc::TemplateStruct::new(client.clone())));
 
 	// Extend this RPC with a custom API by using the following syntax.
 	// `YourRpcStruct` should have a reference to a client, which is needed

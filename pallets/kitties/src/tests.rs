@@ -1,8 +1,8 @@
-use crate::{mock::*, Error, *};
+use crate::{mock::*, *};
 
 
-use frame_support::traits::{ConstU16, ConstU64, ConstU32, ConstU128};
-use frame_support::{assert_noop, assert_ok};
+// use frame_support::traits::{ConstU16, ConstU64, ConstU32, ConstU128};
+use frame_support::{assert_ok};
 
 
 #[test]
@@ -19,7 +19,7 @@ fn should_working_set_price_kitty(){
 		//
 		System::set_block_number(1);
 		
-		KittiesModule::create_kitty(Origin::signed(1));
+		let _ = KittiesModule::create_kitty(Origin::signed(1));
 
 		let kitty_id = KittiesModule::kitties_owned(1)[0];
 		let new_price = Some(100u128);
@@ -32,7 +32,7 @@ fn should_working_transfer_kitty(){
 		//
 		System::set_block_number(1);
 		
-		KittiesModule::create_kitty(Origin::signed(1));
+		let _ = KittiesModule::create_kitty(Origin::signed(1));
 
 		let kitty_id = KittiesModule::kitties_owned(1)[0];
 		assert_ok!(KittiesModule::transfer(Origin::signed(1), 2, kitty_id));
@@ -66,11 +66,11 @@ fn should_working_buy_kitty(){
 		//
 		System::set_block_number(1);
 		
-		KittiesModule::create_kitty(Origin::signed(1));
+		let _ = KittiesModule::create_kitty(Origin::signed(1));
 
 		let kitty_id = KittiesModule::kitties_owned(1)[0];
 		let new_price = Some(100u128);
-		KittiesModule::set_price(Origin::signed(1), kitty_id, new_price);
+		_ = KittiesModule::set_price(Origin::signed(1), kitty_id, new_price);
 
 		let bid_price = 1000u128;
 		assert_ok!(KittiesModule::buy_kitty(Origin::signed(2), kitty_id, bid_price));

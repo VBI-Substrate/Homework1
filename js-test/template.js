@@ -4,7 +4,7 @@ const { ApiPromise, WsProvider} = require('@polkadot/api');
 const wsProvider = new WsProvider('ws://localhost:9944');
 const rpc = {
     templateModule: {
-        something_get: {
+        template_getSomething: {
             description: "test", 
             params: [],
             type: "u32",
