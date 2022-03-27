@@ -3984,6 +3984,7 @@ dependencies = [
  "jsonrpc-core",
  "jsonrpc-core-client",
  "jsonrpc-derive",
+ "pallet-kitties",
  "pallet-template-rpc-runtime-api",
  "parity-scale-codec",
  "sp-api",
@@ -3997,6 +3998,7 @@ dependencies = [
 name = "pallet-template-rpc-runtime-api"
 version = "4.0.0-dev"
 dependencies = [
+ "pallet-kitties",
  "sp-api",
 ]
 

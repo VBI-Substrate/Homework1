@@ -15,6 +15,8 @@ targets = ["x86_64-unknown-linux-gnu"]
 [dependencies]
 sp-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17"}
 
+pallet-kitties = { version = "4.0.0-dev", default-features = false, path = "../../../kitties" }
+
 [features]
 default = ["std"]
 std = [

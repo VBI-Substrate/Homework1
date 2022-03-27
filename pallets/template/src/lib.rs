@@ -112,7 +112,7 @@ impl <T: Config> Pallet<T> {
 		Something::<T>::put(value);
 		Ok(())
 	}
-	pub fn get_something1() -> u32 {
+	pub fn get_something() -> u32 {
 		Something::<T>::get().unwrap()
 	}
 }

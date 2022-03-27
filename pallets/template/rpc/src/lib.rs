@@ -29,11 +29,11 @@ use sp_runtime::{
 };
 use std::sync::Arc;
 pub use pallet_template_rpc_runtime_api::TemplateApi as TemplateRuntimeApi;
-
 #[rpc]
 pub trait TemplateApi<BlockHash> {
 	#[rpc(name = "template_getSomething")]
 	fn get_something(&self, at: Option<BlockHash>) -> Result<u32>;
+
 }
 
 /// A struct that implements the [`TransactionPaymentApi`].

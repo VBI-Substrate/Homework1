@@ -22,6 +22,6 @@
 sp_api::decl_runtime_apis! {
 	pub trait TemplateApi
 	{
-		fn get_something() -> u32; 
+		fn get_something() -> u32;
 	}
 }
