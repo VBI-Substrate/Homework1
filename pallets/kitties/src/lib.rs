@@ -25,31 +25,79 @@ pub mod pallet {
 	use sp_io::hashing::blake2_128;
 	use scale_info::TypeInfo;
 	use crate::weights::WeightInfo;
-
+	use sp_std::vec::Vec ;
+	pub use sp_runtime::AccountId32;
+	// pub use sp_core::crypto::Ss58Codec;
 
 	#[cfg(feature = "std")]
-	use frame_support::serde::{Deserialize, Serialize};
+	use serde::{Deserialize, Serialize};
 
 	type AccountOf<T> = <T as frame_system::Config>::AccountId;
 	type BalanceOf<T> =
 		<<T as Config>::Currency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
 
 	// Struct for holding Kitty information.
-	#[derive(Clone, Encode, Decode, PartialEq, TypeInfo, MaxEncodedLen)]
-	#[scale_info(skip_type_params(T))]
-	#[codec(mel_bound())]
-	pub struct Kitty<T: Config> {
+	#[derive(Clone, Encode, Decode, PartialEq, TypeInfo)]
+	#[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
+	#[cfg_attr(
+		feature = "std",
+		serde(
+			// rename_all = "camelCase",
+			bound(serialize = "Account:std::fmt::Display, Balance: std::fmt::Display"),
+			bound(deserialize = "Account: std::str::FromStr, Balance: std::str::FromStr")
+		)
+	)]
+	pub struct Kitty<Account, Balance> {
 		pub dna: [u8; 16],   // Using 16 bytes to represent a kitty DNA
-		pub price: Option<BalanceOf<T>>,
+		#[cfg_attr(feature = "std", serde(with = "serde_balance"))]
+		pub price: Balance,
 		pub gender: Gender,
-		pub owner: AccountOf<T>,
-		pub created_time: <T as pallet_timestamp::Config>::Moment,
+		#[cfg_attr(feature = "std", serde(with = "serde_account"))]
+		pub owner: Account,
+		// pub created_time: Time,
 	}
-	impl<T: Config> sp_std::fmt::Display for Kitty<T> {
-		fn fmt(&self, f: &mut sp_std::fmt::Formatter<'_>) -> sp_std::fmt::Result {
-			write!(f, "dna: {:?}, price: {:?}, gender: {:?}, owner: {:?}", self.dna, self.price, self.gender, self.owner)
+	#[cfg(feature = "std")]
+	mod serde_account {
+		use serde::{Deserialize, Deserializer, Serializer};
+
+		pub fn serialize<S: Serializer, T: std::fmt::Display>(
+			t: &T,
+			serializer: S,
+		) -> Result<S::Ok, S::Error> {
+			serializer.serialize_str(&t.to_string())
+		}
+
+		pub fn deserialize<'de, D: Deserializer<'de>, T: std::str::FromStr>(
+			deserializer: D,
+		) -> Result<T, D::Error> {
+			let s = String::deserialize(deserializer)?;
+			s.parse::<T>().map_err(|_| serde::de::Error::custom("Parse from string failed"))
 		}
 	}
+
+	#[cfg(feature = "std")]
+	mod serde_balance {
+		use serde::{Deserialize, Deserializer, Serializer};
+
+		pub fn serialize<S: Serializer, T: std::fmt::Display>(
+			t: &T,
+			serializer: S,
+		) -> Result<S::Ok, S::Error> {
+			serializer.serialize_str(&t.to_string())
+		}
+
+		pub fn deserialize<'de, D: Deserializer<'de>, T: std::str::FromStr>(
+			deserializer: D,
+		) -> Result<T, D::Error> {
+			let s = String::deserialize(deserializer)?;
+			s.parse::<T>().map_err(|_| serde::de::Error::custom("Parse from string failed"))
+		}
+	}
+	// impl<T: Config> sp_std::fmt::Display for Kitty<T> {
+	// 	fn fmt(&self, f: &mut sp_std::fmt::Formatter<'_>) -> sp_std::fmt::Result {
+	// 		write!(f, "dna: {:?}, price: {:?}, gender: {:?}, owner: {:?}", self.dna, self.price, self.gender, self.owner)
+	// 	}
+	// }
 	// Enum declaration for Gender.
 	#[derive(Clone, Encode, Decode, PartialEq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
 	#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
@@ -60,6 +108,8 @@ pub mod pallet {
 
     #[pallet::pallet]
     #[pallet::generate_store(pub(super) trait Store)]
+	#[pallet::without_storage_info]
+
     pub struct Pallet<T>(_);
 
 	/// Configure the pallet by specifying the parameters and types it depends on.
@@ -128,7 +178,7 @@ pub mod pallet {
 	#[pallet::storage]
 	#[pallet::getter(fn kitties)]
 	/// Stores a Kitty's unique traits, owner and price.
-	pub(super) type Kitties<T: Config> = StorageMap<_, Twox64Concat, T::Hash, Kitty<T>>;
+	pub(super) type Kitties<T: Config> = StorageMap<_, Twox64Concat, T::Hash, Kitty<T::AccountId, BalanceOf<T>>>;
 
 	#[pallet::storage]
 	#[pallet::getter(fn kitties_owned)]
@@ -152,8 +202,8 @@ pub mod pallet {
 		#[pallet::weight(<T as Config>::WeightInfo::create_kitty())]
 		pub fn create_kitty(origin: OriginFor<T>) -> DispatchResult {
 			let sender = ensure_signed(origin)?;
-			let created_time = pallet_timestamp::Pallet::<T>::now();
-			let kitty_id = Self::mint(&sender, None, None, &created_time)?;
+			// let created_time = pallet_timestamp::Pallet::<T>::now();
+			let kitty_id = Self::mint(&sender, None, None)?;
 
 			// Logging to the console
 			log::info!("A kitty is born with ID: {:?}.", kitty_id);
@@ -178,7 +228,7 @@ pub mod pallet {
 
 			let mut kitty = Self::kitties(&kitty_id).ok_or(<Error<T>>::KittyNotExist)?;
 
-			kitty.price = new_price.clone();
+			kitty.price = new_price.clone().unwrap();
 			<Kitties<T>>::insert(&kitty_id, kitty);
 
 			// Deposit a "PriceSet" event.
@@ -235,7 +285,7 @@ pub mod pallet {
 			ensure!(kitty.owner != buyer, <Error<T>>::BuyerIsKittyOwner);
 
 			// Check the kitty is for sale and the kitty ask price <= bid_price
-			if let Some(ask_price) = kitty.price {
+			if let ask_price = kitty.price {
 				ensure!(ask_price <= bid_price, <Error<T>>::KittyBidPriceTooLow);
 			} else {
 				Err(<Error<T>>::KittyNotForSale)?;
@@ -278,9 +328,9 @@ pub mod pallet {
 			ensure!(Self::is_kitty_owner(&parent2, &sender)?, <Error<T>>::NotKittyOwner);
 
 			let new_dna = Self::breed_dna(&parent1, &parent2)?;
-			let created_time = pallet_timestamp::Pallet::<T>::now();
+			// let created_time = pallet_timestamp::Pallet::<T>::now();
 
-			Self::mint(&sender, Some(new_dna), None, &created_time)?;
+			Self::mint(&sender, Some(new_dna), None)?;
 
 			Ok(())
 		}
@@ -289,6 +339,9 @@ pub mod pallet {
 	//** Our helper functions.**//
 
 	impl<T: Config> Pallet<T> {
+		pub fn get_kitties() -> Vec<Kitty<T::AccountId, BalanceOf<T>>> {
+			Kitties::<T>::iter_values().collect()
+		}
 		fn gen_gender() -> Gender {
 			let random = T::KittyRandomness::random(&b"gender"[..]).0;
 			match random.as_ref()[0] % 2 {
@@ -321,18 +374,18 @@ pub mod pallet {
 			owner: &T::AccountId,
 			dna: Option<[u8; 16]>,
 			gender: Option<Gender>,
-			created_time: &T::Moment,
+			// created_time: &T::Moment,
 		) -> Result<T::Hash, Error<T>> {
-			let kitty = Kitty::<T> {
+			let kitty = Kitty::<T::AccountId, BalanceOf<T>> {
 				dna: dna.unwrap_or_else(Self::gen_dna),
-				price: None,
+				price: 0u32.into(),
 				gender: gender.unwrap_or_else(Self::gen_gender),
 				owner: owner.clone(),
-				created_time: created_time.clone(),
+				// created_time: created_time.clone(),
 			};
 
 			let kitty_id = T::Hashing::hash_of(&kitty);
-			log::info!("kitty: {}", kitty);
+			// log::info!("kitty: {}", kitty);
 
 			// Performs this operation first as it may fail
 			let new_cnt = Self::kitty_cnt().checked_add(1)
@@ -377,7 +430,7 @@ pub mod pallet {
 			kitty.owner = to.clone();
 			// Reset the ask price so the kitty is not for sale until `set_price()` is called
 			// by the current owner.
-			kitty.price = None;
+			kitty.price = 0u32.into();
 
 			<Kitties<T>>::insert(kitty_id, kitty);
 

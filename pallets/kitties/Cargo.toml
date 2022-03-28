@@ -25,6 +25,8 @@ sp-io = { default-features = false, version = "5.0.0", git = "https://github.com
 sp-std = { default-features = false, version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
 serde = { default-features = false, version = "1.0.136", features = ["derive"] }
 log = { default-features = false, version = "0.4.14" }
+sp-core = { default-features = false, version = "5.0.0", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
+
 pallet-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
 
 
@@ -33,6 +35,8 @@ sp-core = { default-features = false, version = "5.0.0", git = "https://github.c
 pallet-balances = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
 pallet-randomness-collective-flip = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
 pallet-timestamp = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
+sp-std = {version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
+
 
 
 [features]
@@ -48,6 +52,7 @@ std = [
 	"log/std", 
 	"pallet-timestamp/std",
 	"sp-std/std",
+	"sp-core/std",
 ]
 
 runtime-benchmarks = ["frame-benchmarking/runtime-benchmarks"]

@@ -47,9 +47,9 @@ fn should_working_breed_kitty(){
 
 		let mom_dna = Some([0u8; 16]);
 		let dad_dna = Some([1u8; 16]);
-		let created_time = &18u64;
-		assert_ok!(KittiesModule::mint(&1, mom_dna, Some(Gender::Female), created_time));
-		assert_ok!(KittiesModule::mint(&1, dad_dna, Some(Gender::Male), created_time));
+		// let created_time = &18u64;
+		assert_ok!(KittiesModule::mint(&1, mom_dna, Some(Gender::Female)));
+		assert_ok!(KittiesModule::mint(&1, dad_dna, Some(Gender::Male)));
 		let mom_id = KittiesModule::kitties_owned(1)[0];
 		let dad_id = KittiesModule::kitties_owned(1)[1];
 		assert_ok!(KittiesModule::breed_kitty(Origin::signed(1), mom_id, dad_id));

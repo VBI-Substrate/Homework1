@@ -505,6 +505,15 @@ impl_runtime_apis! {
 			TemplateModule::something().unwrap()
 		}
 	}
+	impl pallet_kitties_rpc_runtime_api::KittiesApi<Block, AccountId, Balance> for Runtime {
+		fn get_kitty_cnt() -> u64 {
+			Kitties::kitty_cnt()
+		}
+		fn get_kitty() -> Vec<pallet_kitties::Kitty<AccountId, Balance>> {
+			Kitties::get_kitties()
+		}
+
+	}
 
 	#[cfg(feature = "runtime-benchmarks")]
 	impl frame_benchmarking::Benchmark<Block> for Runtime {
