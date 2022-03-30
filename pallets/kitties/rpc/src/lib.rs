@@ -13,10 +13,12 @@ pub use pallet_kitties_rpc_runtime_api::KittiesApi as KittiesRuntimeApi;
 use pallet_kitties::Kitty;
 
 #[rpc]
-pub trait KittiesApi<BlockHash> {
+pub trait KittiesApi<BlockHash, Account, Balance> 
+where Balance: sp_std::fmt::Display + sp_std::str::FromStr {
 	#[rpc(name = "kitties_getKittyCnt")]
 	fn get_kitty_cnt(&self, at: Option<BlockHash>) -> Result<u64>;
-	fn get_kitty(&self, at: Option<BlockHash>) -> Result<Vec<Kitty>>;
+	#[rpc(name = "kitties_getKitty")]
+	fn get_kitty(&self, at: Option<BlockHash>) -> Result<Vec<Kitty<Account, Balance>>>;
 
 }
 
@@ -50,12 +52,14 @@ impl From<Error> for i64 {
 	}
 }
 
-impl<C, Block> KittiesApi<<Block as BlockT>::Hash>
+impl<C, Block, Account, Balance> KittiesApi<<Block as BlockT>::Hash, Account, Balance>
 	for KittiesStruct<C, Block>
 where
 	Block: BlockT,
 	C: 'static + ProvideRuntimeApi<Block> + HeaderBackend<Block>,
-    C::Api: KittiesRuntimeApi<Block>,
+    C::Api: KittiesRuntimeApi<Block, Account, Balance>,
+	pallet_kitties::Kitty<Account, Balance>: sp_api::Decode,
+	Balance: sp_std::fmt::Display + sp_std::str::FromStr,
 {
 	fn get_kitty_cnt(
 		&self,
@@ -76,7 +80,7 @@ where
 	fn get_kitty(
 		&self,
 		at: Option<<Block as BlockT>::Hash>,
-	) -> Result<u64> {
+	) -> Result<Vec<Kitty<Account, Balance>>> {
 		let api = self.client.runtime_api();
 		let at = BlockId::hash(at.unwrap_or_else(||
 			// If the block hash is not supplied assume the best block.

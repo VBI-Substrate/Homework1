@@ -38,42 +38,18 @@ pub mod pallet {
 
 	// Struct for holding Kitty information.
 	#[derive(Clone, Encode, Decode, PartialEq, TypeInfo)]
-	#[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
-	#[cfg_attr(
-		feature = "std",
-		serde(
-			// rename_all = "camelCase",
-			bound(serialize = "Account:std::fmt::Display, Balance: std::fmt::Display"),
-			bound(deserialize = "Account: std::str::FromStr, Balance: std::str::FromStr")
-		)
-	)]
+	#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
+	#[cfg_attr(feature = "std", serde(bound(serialize = "Account: Serialize ,Balance: std::fmt::Display")))]
+	#[cfg_attr(feature = "std", serde(bound(deserialize = "Account: Deserialize<'de>, Balance: std::str::FromStr")))]
 	pub struct Kitty<Account, Balance> {
 		pub dna: [u8; 16],   // Using 16 bytes to represent a kitty DNA
 		#[cfg_attr(feature = "std", serde(with = "serde_balance"))]
 		pub price: Balance,
 		pub gender: Gender,
-		#[cfg_attr(feature = "std", serde(with = "serde_account"))]
 		pub owner: Account,
 		// pub created_time: Time,
 	}
-	#[cfg(feature = "std")]
-	mod serde_account {
-		use serde::{Deserialize, Deserializer, Serializer};
-
-		pub fn serialize<S: Serializer, T: std::fmt::Display>(
-			t: &T,
-			serializer: S,
-		) -> Result<S::Ok, S::Error> {
-			serializer.serialize_str(&t.to_string())
-		}
-
-		pub fn deserialize<'de, D: Deserializer<'de>, T: std::str::FromStr>(
-			deserializer: D,
-		) -> Result<T, D::Error> {
-			let s = String::deserialize(deserializer)?;
-			s.parse::<T>().map_err(|_| serde::de::Error::custom("Parse from string failed"))
-		}
-	}
+	
 
 	#[cfg(feature = "std")]
 	mod serde_balance {

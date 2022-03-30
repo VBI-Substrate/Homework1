@@ -57,6 +57,9 @@ node-template-runtime = { version = "4.0.0-dev", path = "../runtime" }
 pallet-template-rpc-runtime-api = { version = "4.0.0-dev", path = "../pallets/template/rpc/runtime-api" }
 pallet-template-rpc = { version = "4.0.0-dev", path = "../pallets/template/rpc" }
 
+pallet-kitties-rpc-runtime-api = { version = "4.0.0-dev", path = "../pallets/kitties/rpc/runtime-api" }
+pallet-kitties-rpc = { version = "4.0.0-dev", path = "../pallets/kitties/rpc" }
+
 [build-dependencies]
 substrate-build-script-utils = { version = "3.0.0", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
 
