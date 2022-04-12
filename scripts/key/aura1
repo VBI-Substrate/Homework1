@@ -1,0 +1,10 @@
+{
+    "jsonrpc":"2.0",
+    "id":1,
+    "method":"author_insertKey",
+    "params": [
+        "aura", 
+        "gain decorate hybrid thunder leaf volume brick garlic reject ten swing cloud", 
+        "0xec675ffd1662b0b5a5ad65fdbbd8f75fe4dc256ee8f1d23fb93426e9cea2c54c"
+    ]
+}

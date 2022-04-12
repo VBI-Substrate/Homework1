@@ -1,0 +1,10 @@
+{
+    "jsonrpc":"2.0",
+    "id":1,
+    "method":"author_insertKey",
+    "params": [
+        "aura", 
+        "need runway thumb shy exhaust tray sustain bridge accident chase high attend", 
+        "0x14d1c4362491686fda5a806cc45d9c9b8bf33da7f3eda33a0abe693126dd3656"
+    ]
+}

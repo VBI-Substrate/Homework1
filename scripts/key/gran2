@@ -1,0 +1,10 @@
+{
+    "jsonrpc":"2.0",
+    "id":1,
+    "method":"author_insertKey",
+    "params": [
+        "gran", 
+        "need runway thumb shy exhaust tray sustain bridge accident chase high attend", 
+        "0xcb5651f247bbdec871ad0bb3bf6822c396250f6b4129ccc4ce4170205979c32b"
+    ]
+}
