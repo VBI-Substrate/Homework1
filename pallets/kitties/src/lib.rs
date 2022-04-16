@@ -32,7 +32,7 @@ pub mod pallet {
 	#[cfg(feature = "std")]
 	use serde::{Deserialize, Serialize};
 
-	type AccountOf<T> = <T as frame_system::Config>::AccountId;
+	// type AccountOf<T> = <T as frame_system::Config>::AccountId;
 	type BalanceOf<T> =
 		<<T as Config>::Currency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
 

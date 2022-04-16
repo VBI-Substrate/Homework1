@@ -52,6 +52,7 @@ pallet-template = { version = "4.0.0-dev", default-features = false, path = "../
 pallet-tightly-coupling = { version = "4.0.0-dev", default-features = false, path = "../pallets/tightly-coupling" }
 pallet-loosely-coupling = { version = "4.0.0-dev", default-features = false, path = "../pallets/loosely-coupling" }
 pallet-kitties = { version = "4.0.0-dev", default-features = false, path = "../pallets/kitties" }
+pallet-nfts = { version = "4.0.0-dev", default-features = false, path = "../pallets/nfts" }
 
 pallet-template-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, path = "../pallets/template/rpc/runtime-api" }
 pallet-kitties-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, path = "../pallets/kitties/rpc/runtime-api" }
@@ -94,6 +95,7 @@ std = [
 	"pallet-kitties/std",
 	"pallet-template-rpc-runtime-api/std",
 	"pallet-kitties-rpc-runtime-api/std",
+	"pallet-nfts/std",
 ]
 runtime-benchmarks = [
 	"frame-benchmarking/runtime-benchmarks",

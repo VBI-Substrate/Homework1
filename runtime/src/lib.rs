@@ -52,6 +52,9 @@ pub use pallet_loosely_coupling;
 /// Import the kitties pallet
 pub use pallet_kitties;
 
+/// import the nfts pallet
+pub use pallet_nfts;
+
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -303,6 +306,12 @@ impl pallet_kitties::Config for Runtime {
 	type WeightInfo = pallet_kitties::weights::SubstrateWeightInfo<Runtime>;
 }
 
+impl pallet_nfts::Config for Runtime {
+	type Event = Event;
+	type TokenId = u64;
+	type MaxTokenMetadata = ConstU32<100>;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -323,6 +332,7 @@ construct_runtime!(
 		TightlyCoupling: pallet_tightly_coupling,
 		LooselyCoupling: pallet_loosely_coupling,
 		Kitties: pallet_kitties,
+		NonFungibleTokenModule: pallet_nfts,
 	}
 );
 
