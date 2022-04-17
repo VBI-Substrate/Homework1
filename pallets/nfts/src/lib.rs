@@ -44,15 +44,15 @@ pub use pallet::*;
 #[frame_support::pallet]
 pub mod pallet {
 
-use frame_system::{Origin, pallet_prelude::OriginFor};
+	use frame_system::{pallet_prelude::OriginFor};
 
-use super::*;
+	use super::*;
 
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
  
-		type TokenId: Parameter + Member + AtLeast32BitUnsigned + Default + Copy + MaxEncodedLen;
+		type TokenId: Parameter + Member + AtLeast32BitUnsigned + Default + Copy  + MaxEncodedLen;
 
 		type MaxTokenMetadata: Get<u32>;
 	}
@@ -99,12 +99,6 @@ use super::*;
 		/// Not approved
 		NotApprovedOrOwner,
 	}
-
-	/// Next available token ID.
-	#[pallet::storage]
-	#[pallet::getter(fn next_token_id)]
-	pub type NextTokenId<T: Config> = StorageValue<_, T::TokenId, ValueQuery>;
-
 
 	/// Store token info.
 	///
@@ -190,13 +184,18 @@ use super::*;
 			BalanceOf::<T>::insert(&caller, &count);
 			OwnerOf::<T>::remove(&id);
 			Self::deposit_event(Event::Burn(caller, id));
-			
+
 			Ok(())
 		}
 
 	}
 }
+
 impl<T: Config> Pallet<T> {
+	pub fn approve(from: &T::AccountId, operator: &T::AccountId) -> DispatchResult {
+		OperatorApprovals::<T>::insert((from, operator), true);
+		Ok(())
+	}
 	pub fn do_transfer_token_from(caller: &T::AccountId, from: &T::AccountId, to: &T::AccountId, id: T::TokenId) -> DispatchResult {
 		if !Self::exists(id.clone()) {
 			return Err(Error::<T>::TokenNotFound)?;

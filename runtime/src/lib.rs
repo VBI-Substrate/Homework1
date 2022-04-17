@@ -312,6 +312,13 @@ impl pallet_nfts::Config for Runtime {
 	type MaxTokenMetadata = ConstU32<100>;
 }
 
+
+impl pallet_marketplace::Config for Runtime {
+	type Event = Event;
+	type SaleId = u64;
+	type MaxSalesOfOwner = ConstU32<100>;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -333,6 +340,7 @@ construct_runtime!(
 		LooselyCoupling: pallet_loosely_coupling,
 		Kitties: pallet_kitties,
 		NonFungibleTokenModule: pallet_nfts,
+		MarketPlace: pallet_marketplace,
 	}
 );
 
