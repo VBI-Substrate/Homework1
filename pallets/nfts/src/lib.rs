@@ -35,7 +35,8 @@ use sp_std::vec::Vec;
 #[derive(Encode, Decode, Clone, Eq, PartialEq, MaxEncodedLen, RuntimeDebug, TypeInfo)]
 pub struct TokenInfo<AccountId> {
 	/// Token owner
-	pub owner: AccountId
+	pub owner: AccountId,
+	pub instalment_account: Option<AccountId>,
 	
 }
 
@@ -183,6 +184,7 @@ pub mod pallet {
 			let count = BalanceOf::<T>::get(&caller).map(|c| c - 1).ok_or(Error::<T>::CannotFetchValue)?;
 			BalanceOf::<T>::insert(&caller, &count);
 			OwnerOf::<T>::remove(&id);
+			Tokens::<T>::remove(&id);
 			Self::deposit_event(Event::Burn(caller, id));
 
 			Ok(())
@@ -204,7 +206,7 @@ impl<T: Config> Pallet<T> {
 			return Err(Error::<T>::NotApprovedOrOwner)?;
 		}
 		Self::clear_approval(id);
-		Self::remove_token_from(&from,&id)?;
+		Self::remove_token_from(&from, &id)?;
 		Self::add_token_to(to, id)?;
 		Ok(())
 	}
@@ -215,6 +217,10 @@ impl<T: Config> Pallet<T> {
 		let count = BalanceOf::<T>::get(&to).map(|c| c+1).unwrap_or(1);
 		BalanceOf::<T>::insert(&to, count);
 		OwnerOf::<T>::insert(&id, &to);
+		Tokens::<T>::insert(&id, TokenInfo::<T::AccountId> {
+			owner: to.clone(),
+			instalment_account: None,
+		});
 		Ok(())
 	}
 

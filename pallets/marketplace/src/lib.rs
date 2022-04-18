@@ -25,7 +25,6 @@ pub struct SaleInfo<AccountId, TokenId> {
 	pub seller: AccountId,
     pub token_id: TokenId,
     pub price: u128,
-
 } 
 
 #[frame_support::pallet]
@@ -138,14 +137,11 @@ pub mod pallet {
         pub fn buy(origin: OriginFor<T>, sale_id: T::SaleId) -> DispatchResult {
             let buyer = ensure_signed(origin)?;
             ensure!(Sales::<T>::contains_key(sale_id), "No such listing to buy");
-            // ensure!(<Listings<T>>::get(listing_id).unwrap().seller != buyer, "Can't buy own listing");
-
 
             let token_id = Sales::<T>::get(sale_id).unwrap().token_id;
             // pallet_nfts::Pallet::<T>::approve()
             pallet_nfts::Pallet::<T>::do_transfer_token_from(&(MarketOwner::<T>::get()).unwrap(), &(MarketOwner::<T>::get()).unwrap(), &buyer, token_id)?;
-
-
+            Sales::<T>::remove(sale_id);
             Ok(())
 
         }
